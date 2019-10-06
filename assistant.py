@@ -87,9 +87,9 @@ if __name__ == '__main__':
 		query = recognize_voice()
 		if query in ['exit', 'bye', 'goodbye', 'go to sleep']:
 			break
-		elif re.search("play (music|song|songs)", query).group():
+		elif re.search("play (music|song|songs)", query):
 			open_app("lollypop")
-		elif re.search("(poweroff|shut ?down", query).group():
+		elif re.search("(poweroff|shut ?down", query):
 			subprocess.call('poweroff')
 		elif query:
 			wolfram_search(query)
