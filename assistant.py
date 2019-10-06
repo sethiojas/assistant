@@ -6,7 +6,9 @@ import subprocess
 from time import sleep
 import os
 from random import choice
+import wolframalpha
 
+client = wolframalpha.Client('<APP ID>')
 stt = speech_recognition.Recognizer()
 
 stt.dynamic_energy_threshold = True
@@ -58,9 +60,17 @@ def search_web(query):
 	URL = "https://www.google.com/search?q="
 	webbrowser.open(URL+query, new = 2, autoraise = True)
 
+@add_voice
+def wolfram_search(query_term):
+	response = client.query(query_term)
+	if response["@success"] == 'true':
+		response = next(response.results).text
+		print(response)
+		return speak(response)
+	else:
+		subprocess.run(["mpg123","./responses/no_result.mp3"])
+
 
 
 if __name__ == '__main__':
-	command = recognize_voice()
-	if command:
-		search_web(command)
+	
