@@ -76,7 +76,7 @@ def wolfram_search(query_term):
 		play_audio("no_result.mp3")
 		sleep(0.5)
 		return search_web(query_term)
-
+@add_voice
 def open_app(name):
 	path = "/usr/bin/" + name
 	subprocess.run([path])
