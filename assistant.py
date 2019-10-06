@@ -1,8 +1,11 @@
 import speech_recognition
+from gtts import gTTS
 import webbrowser
 from functools import wraps
 import subprocess
 from time import sleep
+import os
+from random import choice
 
 stt = speech_recognition.Recognizer()
 
@@ -29,7 +32,7 @@ def recognize_voice():
 		return command
 	except speech_recognition.UnknownValueError:
 	    print("Sorry. I didn't quite catch that.")
-	    subprocess.run(['mpg123', './responses/sorry.mp3'])
+	    subprocess.run(['mpg123', choice('./responses/sorry.mp3', './responses/wrong_ones_zeros')])
 
 	
 	except speech_recognition.RequestError:
@@ -39,6 +42,14 @@ def recognize_voice():
 	except speech_recognition.WaitTimeoutError:
 		print("No voice detected")
 		subprocess.run(['mpg123', './responses/no_voice.mp3'])
+
+def speak(content):
+	name = "./responses/temp.mp3"
+	tts = gTTS(content, lang = 'en')
+	tts.save(name)
+	subprocess.run(["mpg123",name])
+	os.remove(name)
+
 
 @add_voice
 def search_web(query):
