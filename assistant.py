@@ -7,6 +7,7 @@ from time import sleep
 import os
 from random import choice
 import wolframalpha
+import re
 
 client = wolframalpha.Client('<APP ID HERE>')
 stt = speech_recognition.Recognizer()
@@ -33,7 +34,7 @@ def recognize_voice():
 			print("\n\nListening")
 			audio = stt.listen(source, timeout = 2)
 		
-		command = stt.recognize_google(audio)
+		command = stt.recognize_google(audio).lower()
 		print(command)
 		return command
 	except speech_recognition.UnknownValueError:
@@ -76,12 +77,20 @@ def wolfram_search(query_term):
 		sleep(0.5)
 		return search_web(query_term)
 
+def open_app(name):
+	path = "/usr/bin/" + name
+	subprocess.run([path])
+
 if __name__ == '__main__':
 
 	while True:
 		query = recognize_voice()
 		if query in ['exit', 'bye', 'goodbye', 'go to sleep']:
 			break
+		elif re.search("play (music|song|songs)", query).group():
+			open_app("lollypop")
+		elif re.search("(poweroff|shut ?down", query).group():
+			subprocess.call('poweroff')
 		elif query:
 			wolfram_search(query)
 	play_audio("see_you.mp3")
