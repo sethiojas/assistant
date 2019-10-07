@@ -12,7 +12,7 @@ import re
 import sys
 
 ########################Closed stderr file descriptor (line 18) to supress ALSA error messages
-########################This aside from intened task supresses any and every error message
+########################This aside from intended task supresses any and every error message
 ########################EXERCISE CAUTION
 
 os.close(sys.stderr.fileno())
@@ -20,7 +20,6 @@ os.close(sys.stderr.fileno())
 
 client = wolframalpha.Client('<APP ID HERE>')
 stt = speech_recognition.Recognizer()
-mic = speech_recognition.Microphone()
 
 #Automatic sensitivity adjust for speech recognition
 stt.dynamic_energy_threshold = True
@@ -60,7 +59,7 @@ def recognize_voice():
 	Converts speech to text if detection is success otherwise displays the suitable error
 	'''
 	try:
-		with mic as source:
+		with speech_recognition.Microphone() as source:
 			#wait for a second to let the recognizer adjust the  
 	        #energy threshold based on the surrounding noise level
 			stt.pause_threshold = 1
