@@ -9,16 +9,22 @@ from random import choice
 import wolframalpha
 import re
 
+#Initialize wolframalpha and SpeechRecognition instances
 client = wolframalpha.Client('<APP ID HERE>')
 stt = speech_recognition.Recognizer()
 
+#Automatic sensitivity adjust for speech recognition
 stt.dynamic_energy_threshold = True
 
 def play_audio(audio_name):
+	''' 
+	play audio files in the response directory with mpg123 player
+	'''
 	audio_name = "./responses/"+audio_name
 	subprocess.run(["mpg123",audio_name])
 
 def add_voice(func):
+	''' Adds on_it.mp3 to a function'''
 	@wraps(func)
 	def inner(*args, **kwargs):
 		play_audio("on_it.mp3")
@@ -29,6 +35,9 @@ def add_voice(func):
 	return inner
 
 def recognize_voice():
+	'''
+	Converts speech to text if detection is success otherwise displays the suitable error
+	'''
 	try:
 		with speech_recognition.Microphone() as source:
 			print("\n\nListening")
@@ -52,13 +61,21 @@ def recognize_voice():
 		play_audio("no_voice.mp3")
 
 def speak(content):
+	'''
+	Convert text to speech.
+	Used to make audio responses other than that already present in
+	responses directory.
+	'''
 	file_name = "temp.mp3"
 	tts = gTTS(content, lang = 'en')
 	tts.save(name)
 	play_audio(name)
 	os.remove(file_name)
 
-def search_web(query):
+def search_google(query):
+	'''
+	Opens the google search result of a query in default browser
+	'''
 	play_audio("google.mp3")
 	query = query.split()
 	query = "+".join(query)
@@ -67,17 +84,25 @@ def search_web(query):
 
 @add_voice
 def wolfram_search(query_term):
+	'''
+	Queries the WolframAlpha Simple API for the provided query_term
+	'''
 	response = client.query(query_term)
-	if response["@success"] == 'true':
-		response = next(response.results).text
+	if response["@success"] == 'true': #check if query was a success
+		response = next(response.results).text #text returned as a result of query
 		print(response)
 		return speak(response)
 	else:
+		#if query wasn't a success then google search for the same query
 		play_audio("no_result.mp3")
 		sleep(0.5)
-		return search_web(query_term)
+		return search_google(query_term)
 @add_voice
 def open_app(name):
+	'''
+	Used to open system application i.e. the apps in
+	/usr/bin
+	'''
 	path = "/usr/bin/" + name
 	subprocess.run([path])
 
@@ -85,13 +110,15 @@ if __name__ == '__main__':
 
 	while True:
 		query = recognize_voice()
-		if query in ['exit', 'bye', 'goodbye', 'go to sleep']:
+		if query in ['exit', 'bye', 'goodbye', 'go to sleep']: #exit program if query is a match
 			break
-		elif re.search("play (music|song|songs)", query):
+		elif re.search("play (music|song|songs)", query):# open lollypop musicplayer is query is a match
 			open_app("lollypop")
-		elif re.search("(poweroff|shut ?down)", query):
+		elif re.search("(poweroff|shut ?down)", query): #Shutdown if query is a match
 			subprocess.call('poweroff')
-		elif query:
+		elif query: #query wolfram if all the others were false
 			wolfram_search(query)
+	
+	#Play audio on exit
 	play_audio("see_you.mp3")
 	
