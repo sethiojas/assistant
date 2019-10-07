@@ -43,8 +43,8 @@ def add_voice(func):
 		play_audio("on_it")
 		sleep(1)
 		return_value = func(*args, **kwargs)
-
-		return return_value
+		if return_value:
+			return return_value
 	return inner
 
 def recognize_voice():
@@ -159,34 +159,29 @@ def execute_command(query):
 	'''
 	Execute the appropriate function based on the query.
 	'''
-	if query:
-		if query in ['exit', 'bye', 'goodbye', 'go to sleep']: 
-		#exit program if query is a match
-			break
-		
-		elif re.search("play (music|song|songs)", query):
-		# open lollypop musicplayer is query is a match
-			open_app("lollypop")
-		
-		elif re.search("(wikipedia|wiki)", query):
-		#find wikipedia page of query
-			wikipedia_search(query)
-		
-		elif re.search("youtube", query):
-		#search for query on youtube
-			youtube_video(query)
-		
-		elif re.search("(poweroff|shut ?down)", query):
-		#Shutdown if query is a match
-			subprocess.call('poweroff')
-		
-		elif re.search("google", query):
-		#Search on google
-			search_google(query)
-		
-		elif query:
-		#query wolfram if all the others were false
-			wolfram_search(query)
+	if re.search("play (music|song|songs)", query):
+	# open lollypop musicplayer is query is a match
+		open_app("lollypop")
+	
+	elif re.search("(wikipedia|wiki)", query):
+	#find wikipedia page of query
+		wikipedia_search(query)
+	
+	elif re.search("youtube", query):
+	#search for query on youtube
+		youtube_video(query)
+	
+	elif re.search("(poweroff|shut ?down)", query):
+	#Shutdown if query is a match
+		subprocess.call('poweroff')
+	
+	elif re.search("google", query):
+	#Search on google
+		search_google(query)
+	
+	elif query:
+	#query wolfram if all the others were false
+		wolfram_search(query)
 
 if __name__ == '__main__':
 
@@ -194,7 +189,12 @@ if __name__ == '__main__':
 	play_audio('hello')
 	while True:
 		query = recognize_voice()
-		execute_command(query)
+		if query:
+			if query in ['exit', 'bye', 'goodbye', 'go to sleep']: 
+			#exit program if query is a match
+				break
+			else:
+				execute_command(query)
 	
 	#Play audio on exit
 	play_audio("see_you")
