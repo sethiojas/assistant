@@ -40,8 +40,13 @@ def recognize_voice():
 	'''
 	try:
 		with speech_recognition.Microphone() as source:
+			#wait for a second to let the recognizer adjust the  
+	        #energy threshold based on the surrounding noise level
+			stt.pause_threshold = 1
+			stt.adjust_for_ambient_noise(source, duration	= 1)
+
 			print("\n\nListening")
-			audio = stt.listen(source, timeout = 2)
+			audio = stt.listen(source, timeout = 10)
 		
 		command = stt.recognize_google(audio).lower()
 		print(command)
@@ -109,14 +114,15 @@ if __name__ == '__main__':
 
 	while True:
 		query = recognize_voice()
-		if query in ['exit', 'bye', 'goodbye', 'go to sleep']: #exit program if query is a match
-			break
-		elif re.search("play (music|song|songs)", query):# open lollypop musicplayer is query is a match
-			open_app("lollypop")
-		elif re.search("(poweroff|shut ?down)", query): #Shutdown if query is a match
-			subprocess.call('poweroff')
-		elif query: #query wolfram if all the others were false
-			wolfram_search(query)
+		if query:
+			if query in ['exit', 'bye', 'goodbye', 'go to sleep']: #exit program if query is a match
+				break
+			elif re.search("play (music|song|songs)", query):# open lollypop musicplayer is query is a match
+				open_app("lollypop")
+			elif re.search("(poweroff|shut ?down)", query): #Shutdown if query is a match
+				subprocess.call('poweroff')
+			elif query: #query wolfram if all the others were false
+				wolfram_search(query)
 	
 	#Play audio on exit
 	play_audio("see_you.mp3")
