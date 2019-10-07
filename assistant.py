@@ -77,8 +77,7 @@ def search_google(query):
 	Opens the google search result of a query in default browser
 	'''
 	play_audio("google.mp3")
-	query = query.split()
-	query = "+".join(query)
+	query = query.replace(' ', '+')
 	URL = "https://www.google.com/search?q="
 	webbrowser.open(URL+query, new = 2, autoraise = True)
 
