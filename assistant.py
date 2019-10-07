@@ -17,6 +17,18 @@ stt = speech_recognition.Recognizer()
 #Automatic sensitivity adjust for speech recognition
 stt.dynamic_energy_threshold = True
 
+def remove_words_from_string(string,*args, sep = " "):
+	'''
+	Removes certain word from string and joins them using the sep (seperator) provided.
+	'''
+	string = string.split()
+	for word in args:
+		if word in string:
+			string.remove(word)
+
+	string = sep.join(string)
+	return string
+
 def play_audio(audio_name):
 	''' 
 	play audio files in the response directory with mpg123 player
@@ -83,7 +95,7 @@ def search_google(query):
 	Opens the google search result of a query in default browser
 	'''
 	play_audio("google.mp3")
-	query = query.replace(' ', '+')
+	query = remove_words_from_string(query, 'google', sep = "+")
 	URL = "https://www.google.com/search?q="
 	webbrowser.open(URL+query, new = 2, autoraise = True)
 
@@ -109,13 +121,7 @@ def wikipedia_search(search_term):
 	Search for wikipedia page of given search_term and display the summary.
 	If the user wants the wikipedia page is also opened in the default browser.
 	'''
-	search_term = search_term.split()
-	if 'wikipedia' in search_term:
-		search_term.remove("wikipedia")
-	if 'wiki' in search_term:
-		search_term.remove("wiki")
-
-	search_term = " ".join(search_term)
+	search_term = remove_words_from_string(search_term, 'wiki', 'wikipedia')
 	
 	try:
 		res = wikipedia.page(search_term)
@@ -131,6 +137,13 @@ def wikipedia_search(search_term):
 		play_audio('unable_to_fetch.mp3')
 
 @add_voice
+def youtube_video(query):
+	query = remove_words_from_string(query, 'youtube', 'play',
+	'search', 'on', sep= '+')
+	URL = 'https://www.youtube.com/results?search_query='
+	webbrowser.open(URL+query)
+
+@add_voice
 def open_app(name):
 	'''
 	Used to open system application i.e. the apps in
@@ -139,23 +152,43 @@ def open_app(name):
 	path = "/usr/bin/" + name
 	subprocess.run([path])
 
+def execute_command(query):
+	if query:
+		if query in ['exit', 'bye', 'goodbye', 'go to sleep']: 
+		#exit program if query is a match
+			break
+		
+		elif re.search("play (music|song|songs)", query):
+		# open lollypop musicplayer is query is a match
+			open_app("lollypop")
+		
+		elif re.search("(wikipedia|wiki)", query):
+		#find wikipedia page of query
+			wikipedia_search(query)
+		
+		elif re.search("youtube", query):
+		#search for query on youtube
+			youtube_video(query)
+		
+		elif re.search("(poweroff|shut ?down)", query):
+		#Shutdown if query is a match
+			subprocess.call('poweroff')
+		
+		elif re.search("google", query):
+		#Search on google
+			search_google(query)
+		
+		elif query:
+		#query wolfram if all the others were false
+			wolfram_search(query)
+
 if __name__ == '__main__':
 
 	#Greet user
 	play_audio('hello.mp3')
 	while True:
 		query = recognize_voice()
-		if query:
-			if query in ['exit', 'bye', 'goodbye', 'go to sleep']: #exit program if query is a match
-				break
-			elif re.search("play (music|song|songs)", query):# open lollypop musicplayer is query is a match
-				open_app("lollypop")
-			elif re.search("(wikipedia|wiki)", query):#find wikipedia page of query
-				wikipedia_search(query)
-			elif re.search("(poweroff|shut ?down)", query): #Shutdown if query is a match
-				subprocess.call('poweroff')
-			elif query: #query wolfram if all the others were false
-				wolfram_search(query)
+		execute_command(query)
 	
 	#Play audio on exit
 	play_audio("see_you.mp3")
