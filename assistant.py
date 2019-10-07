@@ -138,6 +138,9 @@ def wikipedia_search(search_term):
 
 @add_voice
 def youtube_video(query):
+	'''
+	Search for videos on youtube as per the given query
+	'''
 	query = remove_words_from_string(query, 'youtube', 'play',
 	'search', 'on', sep= '+')
 	URL = 'https://www.youtube.com/results?search_query='
@@ -153,6 +156,9 @@ def open_app(name):
 	subprocess.run([path])
 
 def execute_command(query):
+	'''
+	Execute the appropriate function based on the query.
+	'''
 	if query:
 		if query in ['exit', 'bye', 'goodbye', 'go to sleep']: 
 		#exit program if query is a match
