@@ -11,14 +11,16 @@ import wikipedia
 import re
 import sys
 
-#Initialize wolframalpha and SpeechRecognition instances
+########################Closed stderr file descriptor (line 18) to supress ALSA error messages
+########################This aside from intened task supresses any and every error message
+########################EXERCISE CAUTION
+
 os.close(sys.stderr.fileno())
+#Initialize wolframalpha and SpeechRecognition instances
 
 client = wolframalpha.Client('<APP ID HERE>')
 stt = speech_recognition.Recognizer()
 mic = speech_recognition.Microphone()
-
-# os.open(sys.stderr.fileno())
 
 #Automatic sensitivity adjust for speech recognition
 stt.dynamic_energy_threshold = True
