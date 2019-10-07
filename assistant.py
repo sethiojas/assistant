@@ -7,6 +7,7 @@ from time import sleep
 import os
 from random import choice
 import wolframalpha
+import wikipedia
 import re
 
 #Initialize wolframalpha and SpeechRecognition instances
@@ -101,6 +102,34 @@ def wolfram_search(query_term):
 		play_audio("no_result.mp3")
 		sleep(0.5)
 		return search_google(query_term)
+
+# @add_voice 					THIS FUNCTION DOES NOT WORK WITH DECORATOR IDK WHY
+def wikipedia_search(search_term):	
+	'''
+	Search for wikipedia page of given search_term and display the summary.
+	If the user wants the wikipedia page is also opened in the default browser.
+	'''
+	search_term = search_term.split()
+	if 'wikipedia' in search_term:
+		search_term.remove("wikipedia")
+	if 'wiki' in search_term:
+		search_term.remove("wiki")
+
+	search_term = " ".join(search_term)
+	
+	try:
+		res = wikipedia.page(search_term)
+		play_audio("summary.mp3")
+		print(res.summary)
+		play_audio("wikipedia.mp3")
+		choice = recognize_voice()
+		if choice:
+			if re.search("(yes|yeah|yea|sure|glad)", choice):
+				webbrowser.open(res.url)
+
+	except:
+		play_audio('unable_to_fetch.mp3')
+
 @add_voice
 def open_app(name):
 	'''
@@ -112,6 +141,8 @@ def open_app(name):
 
 if __name__ == '__main__':
 
+	#Greet user
+	play_audio('hello.mp3')
 	while True:
 		query = recognize_voice()
 		if query:
@@ -119,6 +150,8 @@ if __name__ == '__main__':
 				break
 			elif re.search("play (music|song|songs)", query):# open lollypop musicplayer is query is a match
 				open_app("lollypop")
+			elif re.search("(wikipedia|wiki)", query):#find wikipedia page of query
+				wikipedia_search(query)
 			elif re.search("(poweroff|shut ?down)", query): #Shutdown if query is a match
 				subprocess.call('poweroff')
 			elif query: #query wolfram if all the others were false
