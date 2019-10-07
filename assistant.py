@@ -33,14 +33,14 @@ def play_audio(audio_name):
 	''' 
 	play audio files in the response directory with mpg123 player
 	'''
-	audio_name = "./responses/"+audio_name
-	subprocess.run(["mpg123",audio_name])
+	audio_name = "./responses/"+audio_name+"mp3"
+	subprocess.run(["mpg123", "-q",audio_name])
 
 def add_voice(func):
 	''' Adds on_it.mp3 to a function'''
 	@wraps(func)
 	def inner(*args, **kwargs):
-		play_audio("on_it.mp3")
+		play_audio("on_it")
 		sleep(1)
 		return_value = func(*args, **kwargs)
 
@@ -66,17 +66,17 @@ def recognize_voice():
 		return command
 	except speech_recognition.UnknownValueError:
 	    print("Sorry. I didn't quite catch that.")
-	    audio = choice(('sorry.mp3', 'wrong_ones_zeros.mp3'))
+	    audio = choice(('sorry', 'wrong_ones_zeros'))
 	    play_audio(audio)
 
 	
 	except speech_recognition.RequestError:
 	    print("Could not request results. Check the Internet connection")
-	    play_audio("conn_err.mp3")
+	    play_audio("conn_err")
 	
 	except speech_recognition.WaitTimeoutError:
 		print("No voice detected")
-		play_audio("no_voice.mp3")
+		play_audio("no_voice")
 
 def speak(content):
 	'''
@@ -84,17 +84,17 @@ def speak(content):
 	Used to make audio responses other than that already present in
 	responses directory.
 	'''
-	file_name = "temp.mp3"
+	file_name = "temp"
 	tts = gTTS(content, lang = 'en')
-	tts.save(name)
-	play_audio(name)
+	tts.save(file_name)
+	play_audio(file_name)
 	os.remove(file_name)
 
 def search_google(query):
 	'''
 	Opens the google search result of a query in default browser
 	'''
-	play_audio("google.mp3")
+	play_audio("google")
 	query = remove_words_from_string(query, 'google', sep = "+")
 	URL = "https://www.google.com/search?q="
 	webbrowser.open(URL+query, new = 2, autoraise = True)
@@ -111,7 +111,7 @@ def wolfram_search(query_term):
 		return speak(response)
 	else:
 		#if query wasn't a success then google search for the same query
-		play_audio("no_result.mp3")
+		play_audio("no_result")
 		sleep(0.5)
 		return search_google(query_term)
 
@@ -125,16 +125,16 @@ def wikipedia_search(search_term):
 	
 	try:
 		res = wikipedia.page(search_term)
-		play_audio("summary.mp3")
+		play_audio("summary")
 		print(res.summary)
-		play_audio("wikipedia.mp3")
+		play_audio("wikipedia")
 		choice = recognize_voice()
 		if choice:
 			if re.search("(yes|yeah|yea|sure|glad)", choice):
 				webbrowser.open(res.url)
 
 	except:
-		play_audio('unable_to_fetch.mp3')
+		play_audio('unable_to_fetch')
 
 @add_voice
 def youtube_video(query):
@@ -191,11 +191,11 @@ def execute_command(query):
 if __name__ == '__main__':
 
 	#Greet user
-	play_audio('hello.mp3')
+	play_audio('hello')
 	while True:
 		query = recognize_voice()
 		execute_command(query)
 	
 	#Play audio on exit
-	play_audio("see_you.mp3")
+	play_audio("see_you")
 	
