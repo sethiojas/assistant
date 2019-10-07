@@ -9,10 +9,16 @@ from random import choice
 import wolframalpha
 import wikipedia
 import re
+import sys
 
 #Initialize wolframalpha and SpeechRecognition instances
+os.close(sys.stderr.fileno())
+
 client = wolframalpha.Client('<APP ID HERE>')
 stt = speech_recognition.Recognizer()
+mic = speech_recognition.Microphone()
+
+# os.open(sys.stderr.fileno())
 
 #Automatic sensitivity adjust for speech recognition
 stt.dynamic_energy_threshold = True
@@ -52,13 +58,13 @@ def recognize_voice():
 	Converts speech to text if detection is success otherwise displays the suitable error
 	'''
 	try:
-		with speech_recognition.Microphone() as source:
+		with mic as source:
 			#wait for a second to let the recognizer adjust the  
 	        #energy threshold based on the surrounding noise level
 			stt.pause_threshold = 1
 			stt.adjust_for_ambient_noise(source, duration	= 1)
 
-			print("\n\nListening")
+			print("Listening")
 			audio = stt.listen(source, timeout = 10)
 		
 		command = stt.recognize_google(audio).lower()
@@ -189,8 +195,9 @@ if __name__ == '__main__':
 	play_audio('hello')
 	while True:
 		query = recognize_voice()
+		
 		if query:
-			if query in ['exit', 'bye', 'goodbye', 'go to sleep']: 
+			if query in ['exit', 'bye', 'goodbye', 'go to sleep', 'see you']: 
 			#exit program if query is a match
 				break
 			else:
