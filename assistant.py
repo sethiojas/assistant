@@ -33,7 +33,7 @@ def play_audio(audio_name):
 	''' 
 	play audio files in the response directory with mpg123 player
 	'''
-	audio_name = "./responses/"+audio_name+"mp3"
+	audio_name = "./responses/"+audio_name+".mp3"
 	subprocess.run(["mpg123", "-q",audio_name])
 
 def add_voice(func):
@@ -115,7 +115,7 @@ def wolfram_search(query_term):
 		sleep(0.5)
 		return search_google(query_term)
 
-# @add_voice 					THIS FUNCTION DOES NOT WORK WITH DECORATOR IDK WHY
+@add_voice
 def wikipedia_search(search_term):	
 	'''
 	Search for wikipedia page of given search_term and display the summary.
