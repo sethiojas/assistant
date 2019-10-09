@@ -162,6 +162,15 @@ def open_app(name):
 	path = "/usr/bin/" + name
 	subprocess.run([path])
 
+def save_notes():
+	play_audio("note")
+	note = recognize_voice()
+	if note:
+		note = '* ' + note + '\n'
+		with open('./files/my_notes.txt', 'a') as saver:
+			saver.write(note)
+	play_audio('done')
+
 def execute_command(query):
 	'''
 	Execute the appropriate function based on the query.
@@ -185,6 +194,9 @@ def execute_command(query):
 	elif re.search("google", query):
 	#Search on google
 		search_google(query)
+
+	elif query in re.search("(take|save) ?([a-zA-Z]+)? note(s)?", query):
+		save_notes()
 	
 	elif query:
 	#query wolfram if all the others were false
