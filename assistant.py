@@ -15,7 +15,7 @@ import sys
 ########################This aside from intended task supresses any and every error message
 ########################EXERCISE CAUTION
 
-os.close(sys.stderr.fileno())
+#os.close(sys.stderr.fileno())
 #Initialize wolframalpha and SpeechRecognition instances
 
 client = wolframalpha.Client('<APP ID HERE>')
@@ -195,7 +195,7 @@ def execute_command(query):
 	#Search on google
 		search_google(query)
 
-	elif query in re.search("(take|save) ?([a-zA-Z]+)? note(s)?", query):
+	elif re.search("(take|save) ?([a-zA-Z]+)? note(s)?", query):
 		save_notes()
 	
 	elif query:
