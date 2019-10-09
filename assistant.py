@@ -15,7 +15,8 @@ import sys
 ########################This aside from intended task supresses any and every error message
 ########################EXERCISE CAUTION
 
-#os.close(sys.stderr.fileno())
+os.close(sys.stderr.fileno())
+
 #Initialize wolframalpha and SpeechRecognition instances
 
 client = wolframalpha.Client('<APP ID HERE>')
@@ -163,6 +164,9 @@ def open_app(name):
 	subprocess.run([path])
 
 def save_notes():
+	'''
+	Save user's notes in a text file
+	'''
 	play_audio("note")
 	note = recognize_voice()
 	if note:
@@ -196,7 +200,12 @@ def execute_command(query):
 		search_google(query)
 
 	elif re.search("(take|save) ?([a-zA-Z]+)? note(s)?", query):
+		#save a note
 		save_notes()
+
+	elif re.search("(show)? ?([a-zA-Z]+)? ?note(s)?", query):
+		#dislpay text file containing all the notes
+		subprocess.run(['gedit','./files/my_notes.txt'])
 	
 	elif query:
 	#query wolfram if all the others were false
