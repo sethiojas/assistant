@@ -240,7 +240,10 @@ def execute_command(query):
 	
 	elif query:
 	#query wolfram if all the others were false
-		wolfram_search(query)
+		try:
+			wolfram_search(query)
+		except:
+			search_google(query)
 
 if __name__ == '__main__':
 
