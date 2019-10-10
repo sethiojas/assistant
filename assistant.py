@@ -10,8 +10,9 @@ import wolframalpha
 import wikipedia
 import re
 import sys
+from PyInquirer import prompt
 
-########################Closed stderr file descriptor (line 18) to supress ALSA error messages
+########################Closed stderr file descriptor (line 19) to supress ALSA error messages
 ########################This aside from intended task supresses any and every error message
 ########################EXERCISE CAUTION
 
@@ -175,6 +176,32 @@ def save_notes():
 			saver.write(note)
 	play_audio('done')
 
+def delete_saved_note():
+	'''
+	Deletes a saved note from the text file my_notes.txt
+	'''
+	play_audio('delete_note')
+
+	with open("files/my_notes.txt", 'r') as file:
+		current_notes = file.readlines()
+
+	question = [
+		{
+			"type":"list",
+			"name":"msg",
+			"message":"Which note to delete?",
+			"choices":current_notes
+		}
+	]
+	answer = prompt(question)
+
+	current_notes.remove(answer["msg"])
+	with open('files/my_notes.txt', 'w') as file:
+		for note in current_notes:
+			file.write(note)
+
+	play_audio('done')
+
 def execute_command(query):
 	'''
 	Execute the appropriate function based on the query.
@@ -203,9 +230,13 @@ def execute_command(query):
 		#save a note
 		save_notes()
 
-	elif re.search("(show)? ?([a-zA-Z]+)? ?note(s)?", query):
+	elif re.search("(show|display) ([a-zA-Z]+)? ?note(s)?", query):
 		#dislpay text file containing all the notes
 		subprocess.run(['gedit','./files/my_notes.txt'])
+	
+	elif re.search("(remove|delete) ([a-zA-Z]+)? ?note(s)?", query):
+		#delete saved note
+		delete_saved_note()
 	
 	elif query:
 	#query wolfram if all the others were false
