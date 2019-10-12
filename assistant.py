@@ -11,17 +11,24 @@ import wikipedia
 import re
 import sys
 from PyInquirer import prompt
+import pyttsx3
+import multiprocessing
 
-########################Closed stderr file descriptor (line 19) to supress ALSA error messages
+########################Closed stderr file descriptor (line 21) to supress ALSA error messages
 ########################This aside from intended task supresses any and every error message
 ########################EXERCISE CAUTION
 
 os.close(sys.stderr.fileno())
 
-#Initialize wolframalpha and SpeechRecognition instances
+#Initialize wolframalpha, SpeechRecognition and pyttsx3 instances
 
+engine = pyttsx3.init()
 client = wolframalpha.Client('<APP ID HERE>')
 stt = speech_recognition.Recognizer()
+
+#set properties of pyttsx3 engine
+engine.setProperty("voice", "english+f2")
+engine.setProperty("rate", 145)
 
 #Automatic sensitivity adjust for speech recognition
 stt.dynamic_energy_threshold = True
@@ -93,11 +100,32 @@ def speak(content):
 	Used to make audio responses other than that already present in
 	responses directory.
 	'''
-	file_name = "temp"
-	tts = gTTS(content, lang = 'en')
-	tts.save(file_name)
-	play_audio(file_name)
-	os.remove(file_name)
+
+	#Use Google Text-To-Speech to answer. If it take more than 5 second for the audio to download
+	#Then response is played via pyttsx3 engine.
+	#File created(if any) by gTTS is deleted in the exception block
+	try:
+		file_name = "temp"
+		path = "responses/"+file_name+".mp3"
+
+		tts = gTTS(content, lang = 'en')
+		process = multiprocessing.Process(target = lambda: tts.save(path))
+		process.start()
+		process.join(5)
+
+		if process.is_alive():
+			process.terminate()
+			process.join()
+			raise Exception
+
+		play_audio(file_name)
+		os.remove(path)
+
+	except:
+		if os.path.exists(path):
+			os.remove(path)
+		engine.say(content)
+		engine.runAndWait()
 
 def search_google(query):
 	'''
