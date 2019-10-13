@@ -274,19 +274,4 @@ def execute_command(query):
 			search_google(query)
 
 if __name__ == '__main__':
-
-	#Greet user
-	play_audio('hello')
-	while True:
-		query = recognize_voice()
-		
-		if query:
-			if query in ['exit', 'bye', 'goodbye', 'go to sleep', 'see you']: 
-			#exit program if query is a match
-				break
-			else:
-				execute_command(query)
-	
-	#Play audio on exit
-	play_audio("see_you")
-	
+	main()
