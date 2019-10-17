@@ -232,7 +232,7 @@ def delete_saved_note():
 
 		play_audio('done')
 	else:
-		play_audio("no_note.mp3")
+		play_audio("no_note")
 
 def execute_command(query):
 	'''
