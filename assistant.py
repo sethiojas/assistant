@@ -208,27 +208,31 @@ def delete_saved_note():
 	'''
 	Deletes a saved note from the text file my_notes.txt
 	'''
-	play_audio('delete_note')
 
 	with open("files/my_notes.txt", 'r') as file:
 		current_notes = file.readlines()
+		
+	if current_notes:
+		play_audio('delete_note')
 
-	question = [
-		{
-			"type":"list",
-			"name":"msg",
-			"message":"Which note to delete?",
-			"choices":current_notes
-		}
-	]
-	answer = prompt(question)
+		question = [
+			{
+				"type":"list",
+				"name":"msg",
+				"message":"Which note to delete?",
+				"choices":current_notes
+			}
+		]
+		answer = prompt(question)
 
-	current_notes.remove(answer["msg"])
-	with open('files/my_notes.txt', 'w') as file:
-		for note in current_notes:
-			file.write(note)
+		current_notes.remove(answer["msg"])
+		with open('files/my_notes.txt', 'w') as file:
+			for note in current_notes:
+				file.write(note)
 
-	play_audio('done')
+		play_audio('done')
+	else:
+		play_audio("no_note.mp3")
 
 def execute_command(query):
 	'''
