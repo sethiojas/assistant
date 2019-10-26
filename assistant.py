@@ -10,7 +10,6 @@ import wolframalpha
 import wikipedia
 import re
 import sys
-from PyInquirer import prompt
 import pyttsx3
 import multiprocessing
 import threading
@@ -209,37 +208,17 @@ def save_notes():
 			saver.write(note)
 	play_audio('done')
 
-def delete_saved_note():
+def delete_saved_note(screen_manager):
 	'''
 	Deletes a saved note from the text file my_notes.txt
-	'''
-
-	with open("files/my_notes.txt", 'r') as file:
-		current_notes = file.readlines()
-		
-	if current_notes:
+	'''		
+	if os.path.getsize("files/my_notes.txt"):
 		play_audio('delete_note')
-
-		question = [
-			{
-				"type":"list",
-				"name":"msg",
-				"message":"Which note to delete?",
-				"choices":current_notes
-			}
-		]
-		answer = prompt(question)
-
-		current_notes.remove(answer["msg"])
-		with open('files/my_notes.txt', 'w') as file:
-			for note in current_notes:
-				file.write(note)
-
-		play_audio('done')
+		screen_manager.current = "delete_notes"
 	else:
 		play_audio("no_note")
 
-def execute_command(query):
+def execute_command(query, screen_manager):
 	'''
 	Execute the appropriate function based on the query.
 	'''
@@ -274,7 +253,7 @@ def execute_command(query):
 	
 	elif re.search("(remove|delete) ([a-zA-Z]+)? ?note(s)?", query):
 		#delete saved note
-		delete_saved_note()
+		delete_saved_note(screen_manager)
 	
 	elif query:
 	#query wolfram if all the others were false
