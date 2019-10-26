@@ -15,7 +15,6 @@ mpg123==0.4
 prompt-toolkit==1.0.14
 PyAudio==0.2.11
 Pygments==2.4.2
-PyInquirer==1.0.3
 pyttsx3==2.7
 regex==2019.8.19
 requests==2.22.0
