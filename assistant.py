@@ -13,12 +13,13 @@ import sys
 from PyInquirer import prompt
 import pyttsx3
 import multiprocessing
+import threading
 
 ########################Closed stderr file descriptor (line 21) to supress ALSA error messages
 ########################This aside from intended task supresses any and every error message
 ########################EXERCISE CAUTION
 
-os.close(sys.stderr.fileno())
+# os.close(sys.stderr.fileno())
 
 #Initialize wolframalpha, SpeechRecognition and pyttsx3 instances
 
@@ -71,8 +72,8 @@ def recognize_voice():
 		with speech_recognition.Microphone() as source:
 			#wait for a second to let the recognizer adjust the  
 	        #energy threshold based on the surrounding noise level
-			stt.pause_threshold = 1
-			stt.adjust_for_ambient_noise(source, duration	= 1)
+			# stt.pause_threshold = 1
+			# stt.adjust_for_ambient_noise(source, duration	= 1)
 
 			print("Listening")
 			audio = stt.listen(source, timeout = 10)
@@ -80,19 +81,23 @@ def recognize_voice():
 		command = stt.recognize_google(audio).lower()
 		print(command)
 		return command
+		# q.put(command)
 	except speech_recognition.UnknownValueError:
-	    print("Sorry. I didn't quite catch that.")
 	    audio = choice(('sorry', 'wrong_ones_zeros'))
-	    play_audio(audio)
+	    threading.Thread(target = play_audio, args=(audio,))
+	    return "Sorry. I didn't quite catch that."
+	    # q.put("Sorry. I didn't quite catch that.")
 
 	
 	except speech_recognition.RequestError:
-	    print("Could not request results. Check the Internet connection")
-	    play_audio("conn_err")
+	    threading.Thread(target = play_audio, args=("conn_err"))
+	    return "Could not request results. Check the Internet connection"
+	    # q.put("Could not request results. Check the Internet connection")
 	
 	except speech_recognition.WaitTimeoutError:
-		print("No voice detected")
-		play_audio("no_voice")
+		threading.Thread(target = play_audio, args=("no_voice",))
+		return "No voice detected"
+		# q.put("No voice detected")
 
 def speak(content):
 	'''
@@ -264,6 +269,7 @@ def execute_command(query):
 
 	elif re.search("(show|display) ([a-zA-Z]+)? ?note(s)?", query):
 		#dislpay text file containing all the notes
+		play_audio("on_it")
 		subprocess.run(['gedit','./files/my_notes.txt'])
 	
 	elif re.search("(remove|delete) ([a-zA-Z]+)? ?note(s)?", query):
