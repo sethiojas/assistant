@@ -8,6 +8,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 import threading
 import assistant
 
+#Speech Recognition Errors
 rec_err = (
 	"Sorry. I didn't quite catch that.",
 	"Could not request results. Check the Internet connection",
@@ -16,7 +17,14 @@ rec_err = (
 screen_manager = ScreenManager()
 
 class OutputLabel(ScrollView):
+	'''
+	Class handles the scrollable output window and also the
+	updation of that window with latest messages.
+	'''
 	def __init__(self, **kwargs):
+		'''
+		Scrollable display for displaying messages
+		'''
 		super(OutputLabel, self).__init__(**kwargs)
 
 		self.size = (Window.width, Window.height)
@@ -31,6 +39,9 @@ class OutputLabel(ScrollView):
 		self.layout.add_widget(self.scroll_to_point)
 
 	def update_history(self, message):
+		'''
+		Update Output label to display latest messages
+		'''
 		self.chat_history.text += "\n" + message
 		
 		self.layout.height = self.chat_history.texture_size[1] + 15
@@ -40,9 +51,17 @@ class OutputLabel(ScrollView):
 		self.scroll_to(self.scroll_to_point)
 
 class MainWindow(GridLayout):
-	threading.Thread(target = assistant.play_audio, args = ("hello",)).start()
+	'''
+	Contains Scrollable Display label and a button to start stt recognition
+	via thread.
+	'''
 	def __init__(self,**kwargs):
+		'''
+		Main Window layout containing OutputLabel and a Button
+		to start stt recognition
+		'''
 		super(MainWindow, self).__init__(**kwargs)
+		threading.Thread(target = assistant.play_audio, args = ("hello",)).start()
 		self.cols=1
 		self.rows = 2
 		self.history = OutputLabel()
@@ -50,10 +69,13 @@ class MainWindow(GridLayout):
 
 		self.btn = Button(text = "Speak")
 		self.btn.bind(on_press = self.on_press)
-		# self.btn.bind(on_release = self.execute)
 		self.add_widget(self.btn)
 
 	def rec_and_exec(self, *args):
+		'''
+		Convert speech-to-text then execute the recognized command
+		via thread.
+		'''
 		stt = assistant.recognize_voice()
 		if stt:
 			text = "You said: "+ stt
@@ -62,6 +84,9 @@ class MainWindow(GridLayout):
 				threading.Thread(target = assistant.execute_command, args = (stt,screen_manager)).start()
 	
 	def on_press(self, *args):
+		'''
+		Outputs 'Listening' and starts a thread to recognize voice
+		'''
 		self.history.update_history("Listening")
 
 		if threading.active_count() < 2:
@@ -69,7 +94,14 @@ class MainWindow(GridLayout):
 		
 
 class DeleteNotes(ScrollView):
+	'''
+	Class containing screen layout and functions related to deleting an
+	existing note.
+	'''
 	def __init__(self, **kwargs):
+		'''
+		Displays saved notes as buttons
+		'''
 		super().__init__(**kwargs)
 		self.size = (Window.width, Window.height)
 		self.layout = GridLayout(cols = 1, size_hint_y = None)
@@ -85,6 +117,9 @@ class DeleteNotes(ScrollView):
 				self.layout.add_widget(btn)
 
 	def delete(self, instance):
+		'''
+		Delete a Single stored note
+		'''
 		self.notes.remove(instance.text)
 		with open("files/my_notes.txt", 'w') as file:
 			for item in self.notes:
@@ -94,6 +129,10 @@ class DeleteNotes(ScrollView):
 
 class AssistantApp(App):
 	def build(self):
+		'''
+		Create 'main' screen and 'delete notes' screen.
+		return the ScreenManager Instance
+		'''
 
 		self.MainWindow = MainWindow()
 		screen = Screen(name = "main")
