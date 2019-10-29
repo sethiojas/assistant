@@ -14,12 +14,6 @@ import pyttsx3
 import multiprocessing
 import threading
 
-########################Closed stderr file descriptor (line 21) to supress ALSA error messages
-########################This aside from intended task supresses any and every error message
-########################EXERCISE CAUTION
-
-# os.close(sys.stderr.fileno())
-
 #Initialize wolframalpha, SpeechRecognition and pyttsx3 instances
 
 engine = pyttsx3.init()
