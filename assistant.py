@@ -77,18 +77,18 @@ def recognize_voice():
 		# q.put(command)
 	except speech_recognition.UnknownValueError:
 	    audio = choice(('sorry', 'wrong_ones_zeros'))
-	    threading.Thread(target = play_audio, args=(audio,))
+	    threading.Thread(target = play_audio, args=(audio,)).start()
 	    return "Sorry. I didn't quite catch that."
 	    # q.put("Sorry. I didn't quite catch that.")
 
 	
 	except speech_recognition.RequestError:
-	    threading.Thread(target = play_audio, args=("conn_err"))
+	    threading.Thread(target = play_audio, args=("conn_err")).start()
 	    return "Could not request results. Check the Internet connection"
 	    # q.put("Could not request results. Check the Internet connection")
 	
 	except speech_recognition.WaitTimeoutError:
-		threading.Thread(target = play_audio, args=("no_voice",))
+		threading.Thread(target = play_audio, args=("no_voice",)).start()
 		return "No voice detected"
 		# q.put("No voice detected")
 
