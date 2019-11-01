@@ -1,6 +1,7 @@
 from kivy.app import App
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.core.window import Window
@@ -67,9 +68,12 @@ class MainWindow(GridLayout):
 		self.history = OutputLabel()
 		self.add_widget(self.history)
 
-		self.btn = Button(text = "Speak")
+		self.btn_layout = FloatLayout()
+		self.add_widget(self.btn_layout)
+
+		self.btn = Button(text = "Speak", pos_hint= {"x": 0.45, "y": 0.1}, size_hint = (0.1,0.2))
 		self.btn.bind(on_press = self.on_press)
-		self.add_widget(self.btn)
+		self.btn_layout.add_widget(self.btn)
 
 	def rec_and_exec(self, *args):
 		'''
@@ -79,8 +83,8 @@ class MainWindow(GridLayout):
 		stt = assistant.recognize_voice()
 		if stt:
 			text = "You said: "+ stt
-			self.history.update_history(text)
 			if stt not in rec_err:
+				self.history.update_history(text)
 				threading.Thread(target = assistant.execute_command, args = (stt,screen_manager)).start()
 	
 	def on_press(self, *args):
