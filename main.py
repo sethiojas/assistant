@@ -4,10 +4,11 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.properties import ObjectProperty
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen
 import threading
-import assistant
+import functions
 
 #Speech Recognition Errors
 rec_err = (
@@ -22,22 +23,26 @@ class OutputLabel(ScrollView):
 	Class handles the scrollable output window and also the
 	updation of that window with latest messages.
 	'''
-	def __init__(self, **kwargs):
-		'''
-		Scrollable display for displaying messages
-		'''
-		super(OutputLabel, self).__init__(**kwargs)
+	# def __init__(self, **kwargs):
+	# 	'''
+	# 	Scrollable display for displaying messages
+	# 	'''
+	# 	super(OutputLabel, self).__init__(**kwargs)
 
-		self.size = (Window.width, Window.height)
-		self.layout = GridLayout(cols = 1, size_hint_y = None)
+	# 	self.size = (Window.width, Window.height)
+	# 	self.layout = GridLayout(cols = 1, size_hint_y = None)
 		
-		self.add_widget(self.layout)
+	# 	self.add_widget(self.layout)
 
-		self.chat_history = Label(size_hint_y = None)
-		self.scroll_to_point = Label(size_hint_y = None)
+	# 	self.chat_history = Label(size_hint_y = None)
+	# 	self.scroll_to_point = Label(size_hint_y = None)
 
-		self.layout.add_widget(self.chat_history)
-		self.layout.add_widget(self.scroll_to_point)
+	# 	self.layout.add_widget(self.chat_history)
+	# 	self.layout.add_widget(self.scroll_to_point)
+
+	chat_history = ObjectProperty()
+	scroll_to_point = ObjectProperty()
+	layout = ObjectProperty()
 
 	def update_history(self, message):
 		'''
@@ -56,36 +61,38 @@ class MainWindow(GridLayout):
 	Contains Scrollable Display label and a button to start stt recognition
 	via thread.
 	'''
-	def __init__(self,**kwargs):
-		'''
-		Main Window layout containing OutputLabel and a Button
-		to start stt recognition
-		'''
-		super(MainWindow, self).__init__(**kwargs)
-		threading.Thread(target = assistant.play_audio, args = ("hello",)).start()
-		self.cols=1
-		self.rows = 2
-		self.history = OutputLabel()
-		self.add_widget(self.history)
+	threading.Thread(target = functions.play_audio, args = ("hello",)).start()
+	# def __init__(self,**kwargs):
+	# 	'''
+	# 	Main Window layout containing OutputLabel and a Button
+	# 	to start stt recognition
+	# 	'''
+	# 	super(MainWindow, self).__init__(**kwargs)
+	# 	self.cols=1
+	# 	self.rows = 2
+	# 	self.history = OutputLabel()
+	# 	self.add_widget(self.history)
 
-		self.btn_layout = FloatLayout()
-		self.add_widget(self.btn_layout)
+	# 	self.btn_layout = FloatLayout(size_hint_y = 0.1)
+	# 	self.add_widget(self.btn_layout)
 
-		self.btn = Button(text = "Speak", pos_hint= {"x": 0.45, "y": 0.1}, size_hint = (0.1,0.2))
-		self.btn.bind(on_press = self.on_press)
-		self.btn_layout.add_widget(self.btn)
+	# 	self.btn = Button(text = "Speak", pos_hint= {"x": 0.45, "y": 0.1}, size_hint = (0.1,0.8))
+	# 	self.btn.bind(on_press = self.on_press)
+	# 	self.btn_layout.add_widget(self.btn)
+
+	history = ObjectProperty()
 
 	def rec_and_exec(self, *args):
 		'''
 		Convert speech-to-text then execute the recognized command
 		via thread.
 		'''
-		stt = assistant.recognize_voice()
+		stt = functions.recognize_voice()
 		if stt:
 			text = "You said: "+ stt
 			if stt not in rec_err:
 				self.history.update_history(text)
-				threading.Thread(target = assistant.execute_command, args = (stt,screen_manager)).start()
+				threading.Thread(target = functions.execute_command, args = (stt,screen_manager)).start()
 	
 	def on_press(self, *args):
 		'''
@@ -102,34 +109,42 @@ class DeleteNotes(ScrollView):
 	Class containing screen layout and functions related to deleting an
 	existing note.
 	'''
+	layout = ObjectProperty()
 	def __init__(self, **kwargs):
-		'''
-		Displays saved notes as buttons
-		'''
 		super().__init__(**kwargs)
-		self.size = (Window.width, Window.height)
-		self.layout = GridLayout(cols = 1, size_hint_y = None)
-		self.layout.bind(minimum_height=self.layout.setter('height'))
-		self.add_widget(self.layout)
 		self.notes = None
+		self.layout.bind(minimum_height=self.layout.setter('height'))
+		self.load_notes()
+
+	# 	'''
+	# 	Displays saved notes as buttons
+	# 	'''
+	# 	super().__init__(**kwargs)
+	# 	self.size = (Window.width, Window.height)
+	# 	self.layout = GridLayout(cols = 1, size_hint_y = None)
+	# 	self.layout.bind(minimum_height=self.layout.setter('height'))
+	# 	self.add_widget(self.layout)
+
+	def load_notes(self, *args):
+
 		with open("files/my_notes.txt", 'r') as file:
 			self.notes = file.readlines()
-		if self.notes:
-			for item in self.notes:
-				btn = Button(text = item, size_hint_y = None, height = "40dp")
-				btn.bind(on_press = self.delete)
-				self.layout.add_widget(btn)
+		for item in self.notes:
+			btn = Button(text = item, size_hint_y = None, height = "40dp")
+			btn.bind(on_press = self.delete)
+			self.layout.add_widget(btn)
 
 	def delete(self, instance):
 		'''
 		Delete a Single stored note
 		'''
 		self.notes.remove(instance.text)
+		self.layout.remove_widget(instance)
 		with open("files/my_notes.txt", 'w') as file:
 			for item in self.notes:
 				file.write(item)
 		screen_manager.current = "main"
-		assistant.play_audio("done")
+		functions.play_audio("done")
 
 class AssistantApp(App):
 	def build(self):
