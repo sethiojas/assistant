@@ -23,22 +23,6 @@ class OutputLabel(ScrollView):
 	Class handles the scrollable output window and also the
 	updation of that window with latest messages.
 	'''
-	# def __init__(self, **kwargs):
-	# 	'''
-	# 	Scrollable display for displaying messages
-	# 	'''
-	# 	super(OutputLabel, self).__init__(**kwargs)
-
-	# 	self.size = (Window.width, Window.height)
-	# 	self.layout = GridLayout(cols = 1, size_hint_y = None)
-		
-	# 	self.add_widget(self.layout)
-
-	# 	self.chat_history = Label(size_hint_y = None)
-	# 	self.scroll_to_point = Label(size_hint_y = None)
-
-	# 	self.layout.add_widget(self.chat_history)
-	# 	self.layout.add_widget(self.scroll_to_point)
 
 	chat_history = ObjectProperty()
 	scroll_to_point = ObjectProperty()
@@ -62,24 +46,6 @@ class MainWindow(GridLayout):
 	via thread.
 	'''
 	threading.Thread(target = functions.play_audio, args = ("hello",)).start()
-	# def __init__(self,**kwargs):
-	# 	'''
-	# 	Main Window layout containing OutputLabel and a Button
-	# 	to start stt recognition
-	# 	'''
-	# 	super(MainWindow, self).__init__(**kwargs)
-	# 	self.cols=1
-	# 	self.rows = 2
-	# 	self.history = OutputLabel()
-	# 	self.add_widget(self.history)
-
-	# 	self.btn_layout = FloatLayout(size_hint_y = 0.1)
-	# 	self.add_widget(self.btn_layout)
-
-	# 	self.btn = Button(text = "Speak", pos_hint= {"x": 0.45, "y": 0.1}, size_hint = (0.1,0.8))
-	# 	self.btn.bind(on_press = self.on_press)
-	# 	self.btn_layout.add_widget(self.btn)
-
 	history = ObjectProperty()
 
 	def rec_and_exec(self, *args):
@@ -111,22 +77,16 @@ class DeleteNotes(ScrollView):
 	'''
 	layout = ObjectProperty()
 	def __init__(self, **kwargs):
+		
 		super().__init__(**kwargs)
 		self.notes = None
 		self.layout.bind(minimum_height=self.layout.setter('height'))
 		self.load_notes()
 
-	# 	'''
-	# 	Displays saved notes as buttons
-	# 	'''
-	# 	super().__init__(**kwargs)
-	# 	self.size = (Window.width, Window.height)
-	# 	self.layout = GridLayout(cols = 1, size_hint_y = None)
-	# 	self.layout.bind(minimum_height=self.layout.setter('height'))
-	# 	self.add_widget(self.layout)
-
 	def load_notes(self, *args):
-
+		'''
+		Saved notes are displayed as buttons
+		'''
 		with open("files/my_notes.txt", 'r') as file:
 			self.notes = file.readlines()
 		for item in self.notes:
