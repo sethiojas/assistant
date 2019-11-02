@@ -50,3 +50,31 @@
 		id: _layout
 		cols:1
 		size_hint_y: None
+
+<WikipediaDisplay>:
+
+	display: _display
+
+	GridLayout:
+		cols:1
+		rows:2
+
+		ScrollView:
+
+			size: Window.width, Window.height
+			do_scroll_y:True
+			do_scroll_x: False
+
+			Label:
+				id: _display
+				size_hint_y:None
+				text_size: self.width, None
+				height: self.texture_size[1]
+
+		FloatLayout:
+			size_hint_y: 0.1
+			Button:
+				text:"Back"
+				on_press: app.manager.current = "main"
+				pos_hint:{"x":0.45, "y":0.1}
+				size_hint: 0.1,0.8
