@@ -1,0 +1,52 @@
+#: import Window kivy.core.window.Window
+
+<OutputLabel>:
+	
+	chat_history: _chat_history
+	scroll_to_point: _scroll_to_point
+	layout: _layout
+
+	size: Window.width, Window.height
+
+	GridLayout:
+		id: _layout
+		cols:1
+		size_hint_y: None
+
+		Label:
+			id: _chat_history
+			text:""
+			size_hint_y: None
+		
+		Label:
+			id: _scroll_to_point
+			size_hint_y: None
+
+<MainWindow>:
+
+	history:_history
+	cols: 1
+	rows: 2
+
+	OutputLabel:
+		id:_history
+
+	FloatLayout:
+
+		size_hint_y: 0.1
+
+		Button:
+			text:"Speak"
+			on_press: root.on_press()
+			pos_hint:{"x":0.45, "y":0.1}
+			size_hint: 0.1,0.8
+
+<DeleteNotes>:
+
+	size: Window.width, Window.height
+	layout: _layout
+
+	GridLayout:
+		id: _layout
+		cols:1
+		size_hint_y: None
