@@ -7,6 +7,7 @@ from kivy.uix.button import Button
 from kivy.properties import ObjectProperty
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen
+import os
 import threading
 import functions
 
@@ -45,7 +46,7 @@ class MainWindow(GridLayout):
 	Contains Scrollable Display label and a button to start stt recognition
 	via thread.
 	'''
-	threading.Thread(target = functions.play_audio, args = ("hello",)).start()
+	# threading.Thread(target = functions.play_audio, args = ("hello",)).start()
 	history = ObjectProperty()
 
 	def rec_and_exec(self, *args):
@@ -106,10 +107,34 @@ class DeleteNotes(ScrollView):
 		screen_manager.current = "main"
 		functions.play_audio("done")
 
+class WikipediaDisplay(Screen):
+	'''
+	Display Summary fetched from wikipedia
+	'''
+	
+	display = ObjectProperty()
+
+	def on_enter(self):
+		'''
+		When on_enter event is flagged display the summary via txt file
+		'''
+		path = "files/my_notes.txt"
+		if os.path.exists(path):
+			with open(path) as file:
+				text_to_show = file.read()
+
+			self.display.text = text_to_show
+			os.remove(path)
+
 class AssistantApp(App):
+	
+	def __init__(self,**kwargs):
+		super().__init__(**kwargs)
+		self.manager = screen_manager
+	
 	def build(self):
 		'''
-		Create 'main' screen and 'delete notes' screen.
+		Create 'main' screen', 'delete notes', and 'wiki' screen.
 		return the ScreenManager Instance
 		'''
 
@@ -122,6 +147,8 @@ class AssistantApp(App):
 		screen = Screen(name = "delete_notes")
 		screen.add_widget(self.DeleteNotes)
 		screen_manager.add_widget(screen)
+
+		screen_manager.add_widget(WikipediaDisplay(name = "wiki"))
 		
 		return screen_manager
 
