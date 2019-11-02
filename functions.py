@@ -157,7 +157,7 @@ def wolfram_search(query_term):
 		return search_google(query_term)
 
 @add_voice
-def wikipedia_search(search_term):	
+def wikipedia_search(search_term, screen_manager):	
 	'''
 	Search for wikipedia page of given search_term and display the summary.
 	If the user wants the wikipedia page is also opened in the default browser.
@@ -166,16 +166,23 @@ def wikipedia_search(search_term):
 	
 	try:
 		res = wikipedia.page(search_term)
+	except:
+		play_audio('unable_to_fetch')
+
+	else:
 		play_audio("summary")
-		print(res.summary)
+		with open("files/display.txt", 'w') as file:
+			file.write(res.summary)
+
+		screen_manager.current = "wiki"
+		
 		play_audio("wikipedia")
 		choice = recognize_voice()
 		if choice and choice not in rec_err:
 			if re.search("(yes|yeah|yea|sure|glad)", choice):
 				webbrowser.open(res.url)
+			play_audio("alright")
 
-	except:
-		play_audio('unable_to_fetch')
 
 @add_voice
 def youtube_video(query):
@@ -228,7 +235,7 @@ def execute_command(query, screen_manager):
 	
 	elif re.search("(wikipedia|wiki)", query):
 	#find wikipedia page of query
-		wikipedia_search(query)
+		wikipedia_search(query, screen_manager)
 	
 	elif re.search("youtube", query):
 	#search for query on youtube
