@@ -81,7 +81,6 @@ class DeleteNotes(ScrollView):
 		
 		super().__init__(**kwargs)
 		self.notes = None
-		self.layout.bind(minimum_height=self.layout.setter('height'))
 		self.load_notes()
 
 	def load_notes(self, *args):
@@ -118,13 +117,31 @@ class WikipediaDisplay(Screen):
 		'''
 		When on_enter event is flagged display the summary via txt file
 		'''
-		path = "files/my_notes.txt"
+		path = "files/display.txt"
 		if os.path.exists(path):
-			with open(path) as file:
-				text_to_show = file.read()
+			with open(path, 'r') as file:
+				text_to_display = file.read()
 
-			self.display.text = text_to_show
+			self.display.text = text_to_display
 			os.remove(path)
+
+class NotesDisplay(Screen):
+	'''
+	Displays the saved notes
+	'''
+
+	dislpay = ObjectProperty()
+
+	def on_enter(self):
+		'''
+		When on_enter event is flaged, open my_notes.txt and
+		display its contents.
+		'''
+		path = "files/my_notes.txt"
+		with open(path, 'r') as file:
+			text_to_display = file.read()
+
+		self.display.text = text_to_display
 
 class AssistantApp(App):
 	
@@ -134,8 +151,9 @@ class AssistantApp(App):
 	
 	def build(self):
 		'''
-		Create 'main' screen', 'delete notes', and 'wiki' screen.
-		return the ScreenManager Instance
+		Create 'main' screen', 'delete notes', 'wiki' and
+		'show_notes' screen.
+		Return the ScreenManager Instance.
 		'''
 
 		self.MainWindow = MainWindow()
@@ -149,6 +167,8 @@ class AssistantApp(App):
 		screen_manager.add_widget(screen)
 
 		screen_manager.add_widget(WikipediaDisplay(name = "wiki"))
+
+		screen_manager.add_widget(NotesDisplay(name = "show_notes"))
 		
 		return screen_manager
 
