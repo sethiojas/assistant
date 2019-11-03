@@ -162,12 +162,14 @@ def wikipedia_search(search_term, screen_manager):
 	Search for wikipedia page of given search_term and display the summary.
 	If the user wants the wikipedia page is also opened in the default browser.
 	'''
+
 	search_term = remove_words_from_string(search_term, 'wiki', 'wikipedia')
 	
 	try:
 		res = wikipedia.page(search_term)
-	except:
+	except Exception as err:
 		play_audio('unable_to_fetch')
+		print(err)
 
 	else:
 		play_audio("summary")
@@ -175,7 +177,7 @@ def wikipedia_search(search_term, screen_manager):
 			file.write(res.summary)
 
 		screen_manager.current = "wiki"
-		
+	
 		play_audio("wikipedia")
 		choice = recognize_voice()
 		if choice and choice not in rec_err:
@@ -225,6 +227,16 @@ def delete_saved_note(screen_manager):
 	else:
 		play_audio("no_note")
 
+def show_notes(screen_manager):
+	'''
+	Displays the notes.
+	'''
+	if os.path.getsize("files/my_notes.txt"):
+		play_audio("on_it")
+		screen_manager.current = "show_notes"
+	else:
+		play_audio("no_note_to_display")
+
 def execute_command(query, screen_manager):
 	'''
 	Execute the appropriate function based on the query.
@@ -254,10 +266,9 @@ def execute_command(query, screen_manager):
 		save_notes()
 
 	elif re.search("(show|display) ([a-zA-Z]+)? ?note(s)?", query):
-		#dislpay text file containing all the notes
-		play_audio("on_it")
-		subprocess.run(['gedit','./files/my_notes.txt'])
-	
+		#dislpay the notes
+		show_notes(screen_manager)
+
 	elif re.search("(remove|delete) ([a-zA-Z]+)? ?note(s)?", query):
 		#delete saved note
 		delete_saved_note(screen_manager)
