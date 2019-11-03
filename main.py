@@ -34,11 +34,6 @@ class OutputLabel(ScrollView):
 		Update Output label to display latest messages
 		'''
 		self.chat_history.text += "\n" + message
-		
-		self.layout.height = self.chat_history.texture_size[1] + 15
-		self.chat_history.height = self.chat_history.texture_size[1]
-		self.chat_history.text_size = (self.chat_history.width * 0.98, None)
-		
 		self.scroll_to(self.scroll_to_point)
 
 class MainWindow(GridLayout):

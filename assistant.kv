@@ -4,18 +4,18 @@
 	
 	chat_history: _chat_history
 	scroll_to_point: _scroll_to_point
-	layout: _layout
 
 	size: Window.width, Window.height
 
 	GridLayout:
-		id: _layout
 		cols:1
 		size_hint_y: None
+		height: _chat_history.texture_size[1]+15
 
 		Label:
 			id: _chat_history
-			text:""
+			height: self.texture_size[1]
+			text_size: self.width*0.98, None
 			size_hint_y: None
 		
 		Label:
