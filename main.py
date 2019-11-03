@@ -1,11 +1,8 @@
 from kivy.app import App
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.properties import ObjectProperty
-from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen
 import os
 import threading
