@@ -1,0 +1,39 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+beautifulsoup4 = "*"
+certifi = "*"
+chardet = "*"
+click = "*"
+docutils = "*"
+idna = "*"
+inflect = "*"
+kivy-garden = "*"
+more-itertools = "*"
+mpg123 = "*"
+pyttsx3 = "*"
+regex = "*"
+requests = "*"
+six = "*"
+soupsieve = "*"
+urllib3 = "*"
+wcwidth = "*"
+wikipedia = "*"
+wolframalpha = "*"
+xmltodict = "*"
+gTTS = "*"
+gTTS-token = "*"
+"jaraco.itertools" = "*"
+Kivy = "*"
+prompt_toolkit = "*"
+PyAudio = "*"
+Pygments = "*"
+SpeechRecognition = "*"
+
+[requires]
+python_version = "3.7"
