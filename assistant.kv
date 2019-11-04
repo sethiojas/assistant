@@ -1,4 +1,5 @@
 #: import Window kivy.core.window.Window
+#: import Image kivy.uix.image
 
 <OutputLabel>:
 	
@@ -17,6 +18,15 @@
 			height: self.texture_size[1]
 			text_size: self.width*0.98, None
 			size_hint_y: None
+			bg_color: (0,0,0)
+			
+			canvas.before:
+				Color:
+					rgb: self.bg_color
+
+				Rectangle:
+					size: self.size
+					pos: self.pos
 		
 		Label:
 			id: _scroll_to_point
@@ -36,10 +46,22 @@
 		size_hint_y: 0.1
 
 		Button:
-			text:"Speak"
 			on_press: root.on_press()
 			pos_hint:{"x":0.45, "y":0.1}
 			size_hint: 0.1,0.8
+
+			canvas	:
+				Color:
+					rgb: 0,0,0
+				Rectangle:
+					size: self.size
+					pos: self.pos
+
+			Image:
+				source: 'files/mic.png'
+				size: self.parent.size
+				allow_stretch: True
+				pos: self.parent.pos
 
 <DeleteNotes>:
 
@@ -51,6 +73,7 @@
 		cols:1
 		size_hint_y: None
 		height: self.minimum_height
+		padding: 30,30
 
 <ScrollviewWithButton@GridLayout>:
 	cols:1
