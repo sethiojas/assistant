@@ -100,6 +100,7 @@ class DeleteNotes(ScrollView):
 		for item in self.notes:
 			btn = Button(text = item, size_hint_y = None, height = "40dp")
 			btn.bind(on_press = self.delete)
+			btn.background_color = [1, 0.835, 0.835, 1] #Pale red
 			self.layout.add_widget(btn)
 
 	def delete(self, instance):
