@@ -98,6 +98,13 @@ def recognize_voice():
 		return "No voice detected"
 		# q.put("No voice detected")
 
+def tts_save(content, path):
+	'''
+	Generates and saves tts response
+	'''
+	tts = gTTS(content, lang = 'en')
+	tts.save(path)	
+
 def speak(content):
 	'''
 	Convert text to speech.
@@ -105,16 +112,16 @@ def speak(content):
 	responses directory.
 	'''
 
-	#Use Google Text-To-Speech to answer. If it take more than 5 second for the audio to download
+	#Use Google Text-To-Speech to answer. If it takes more than 5 second to fetch the audio
 	#Then response is played via pyttsx3 engine.
-	#File created(if any) by gTTS is deleted in the exception block
+	#File created(if any) by gTTS is deleted in the except block
 	try:
+		
 		file_name = "temp"
 		path = "responses/"+file_name+".mp3"
 
-		tts = gTTS(content, lang = 'en')
-		process = multiprocessing.Process(target = lambda: tts.save(path))
-		process.start()
+		process = multiprocessing.Process(target = tts_save, args = (content,path))
+		process.run()
 		process.join(5)
 
 		if process.is_alive():
