@@ -7,12 +7,27 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 import os
 import threading
 import functions
+from random import choice
 
 #Speech Recognition Errors
 rec_err = (
 	"Sorry. I didn't quite catch that.",
 	"Could not request results. Check the Internet connection",
 	"No voice detected")
+
+# Dictionary containing color code(hex) and respective rgb percentage (out of 1)
+
+color_dict = {
+
+	"be7575" : (0.745, 0.459, 0.459),#Slightly desaturated red
+	"d597ce" : (0.835, 0.592, 0.808),#slightly desaturated magenta
+	"537ec5" : (0.325, 0.494, 0.773),#Moderate blue
+	"293a80" : (0.161, 0.227, 0.502),#Dark moderate blue
+	"c70d3a" : (0.780, 0.510, 0.227),#Strong red
+	"512c62" : (0.318, 0.173, 0.384),#Very dark desaturated violet
+	"bd574e" : (0.741, 0.341, 0.306),#Moderate Red
+	"11999e" : (0.670, 0.600, 0.620),#Dark cyan
+}
 
 screen_manager = ScreenManager()
 
@@ -21,7 +36,6 @@ class OutputLabel(ScrollView):
 	Class handles the scrollable output window and also the
 	updation of that window with latest messages.
 	'''
-
 	chat_history = ObjectProperty()
 	scroll_to_point = ObjectProperty()
 	layout = ObjectProperty()
@@ -31,6 +45,8 @@ class OutputLabel(ScrollView):
 		Update Output label to display latest messages
 		'''
 		self.chat_history.text += "\n" + message
+		color = choice(list(color_dict.keys()))
+		self.chat_history.bg_color = color_dict[color]
 		self.scroll_to(self.scroll_to_point)
 
 class MainWindow(GridLayout):
