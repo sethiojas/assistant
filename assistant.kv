@@ -93,11 +93,24 @@
 
 	FloatLayout:
 		size_hint_y: 0.1
+		
 		Button:
-			text:"Back"
 			on_press: app.manager.current = "main"
 			pos_hint:{"x":0.45, "y":0.1}
 			size_hint: 0.1,0.8
+
+			canvas:
+				Color:
+					rgb: 0,0,0
+				Rectangle:
+					size: self.size
+					pos: self.pos
+
+			Image:
+				source:'files/back.png'
+				size: self.parent.size
+				pos: self.parent.pos
+				allow_stretch: True
 
 <WikipediaDisplay>:
 
