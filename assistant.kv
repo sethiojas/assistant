@@ -90,10 +90,18 @@
 			size_hint_y:None
 			text_size: self.width, None
 			height: self.texture_size[1]
+			bg_color: 0,0,0
+
 
 	FloatLayout:
 		size_hint_y: 0.1
 		
+		canvas:
+			Color:
+				rgb: 0,0,0
+			Rectangle:
+				size: self.size
+				pos: self.pos
 		Button:
 			on_press: app.manager.current = "main"
 			pos_hint:{"x":0.45, "y":0.1}
@@ -106,6 +114,7 @@
 					size: self.size
 					pos: self.pos
 
+
 			Image:
 				source:'files/back.png'
 				size: self.parent.size
@@ -115,14 +124,28 @@
 <WikipediaDisplay>:
 
 	display: view.ids._display
-	
+
 	ScrollviewWithButton:
 		id: view
+
+		canvas.before:
+			Color:
+				rgb: (0.325, 0.494, 0.773) #Blue
+			Rectangle:
+				size: self.size
+				pos: self.pos
 
 <NotesDisplay>:
 
 	display: view.ids._display
-	
+		
 	ScrollviewWithButton:
 		id: view
+
+		canvas.before:
+			Color:
+				rgb: (0.835, 0.592, 0.808) #Pink maybe
+			Rectangle:
+				size: self.size
+				pos: self.pos
 	
