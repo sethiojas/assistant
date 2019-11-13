@@ -8,6 +8,7 @@ import os
 import threading
 import functions
 from random import choice
+from kivy.clock import Clock
 
 #Speech Recognition Errors
 rec_err = (
@@ -65,6 +66,7 @@ class MainWindow(GridLayout):
 		stt = functions.recognize_voice()
 		if stt:
 			text = "You said: "+ stt
+			stt = stt.lower()
 			if stt not in rec_err:
 				self.history.update_history(text)
 				threading.Thread(target = functions.execute_command, args = (stt,screen_manager)).start()
@@ -79,22 +81,22 @@ class MainWindow(GridLayout):
 			threading.Thread(target = self.rec_and_exec).start()
 		
 
-class DeleteNotes(ScrollView):
+class DeleteNotes(Screen):
 	'''
 	Class containing screen layout and functions related to deleting an
 	existing note.
 	'''
 	layout = ObjectProperty()
-	def __init__(self, **kwargs):
-		
-		super().__init__(**kwargs)
-		self.notes = None
-		self.load_notes()
+	notes = None
+	
+	def on_enter(self):
+		Clock.schedule_once(self.show_note)
 
-	def load_notes(self, *args):
+	def show_note(self, *args):
 		'''
 		Saved notes are displayed as buttons
 		'''
+		self.layout.clear_widgets()
 		with open("files/my_notes.txt", 'r') as file:
 			self.notes = file.readlines()
 		for item in self.notes:
@@ -170,10 +172,10 @@ class AssistantApp(App):
 		screen.add_widget(self.MainWindow)
 		screen_manager.add_widget(screen)
 
-		self.DeleteNotes = DeleteNotes()
-		screen = Screen(name = "delete_notes")
-		screen.add_widget(self.DeleteNotes)
-		screen_manager.add_widget(screen)
+		# self.DeleteNotes = DeleteNotes()
+		# screen = Screen(name = "delete_notes")
+		# screen.add_widget(self.DeleteNotes)
+		screen_manager.add_widget(DeleteNotes(name = "delete_notes"))
 
 		screen_manager.add_widget(WikipediaDisplay(name = "wiki"))
 
