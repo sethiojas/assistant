@@ -65,15 +65,17 @@
 
 <DeleteNotes>:
 
-	size: Window.width, Window.height
 	layout: _layout
+	
+	ScrollView:
+		size: Window.width, Window.height
 
-	GridLayout:
-		id: _layout
-		cols:1
-		size_hint_y: None
-		height: self.minimum_height
-		padding: 30,30
+		GridLayout:
+			id: _layout
+			cols:1
+			size_hint_y: None
+			height: self.minimum_height
+			padding: 30,30
 
 <ScrollviewWithButton@GridLayout>:
 	cols:1
