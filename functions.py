@@ -13,19 +13,25 @@ import sys
 import pyttsx3
 import multiprocessing
 import threading
+import sys
 
 #Initialize wolframalpha, SpeechRecognition and pyttsx3 instances
+try:
+	engine = pyttsx3.init()
+	#client = wolframalpha.Client('<APP ID HERE>')
+	stt = speech_recognition.Recognizer()
 
-engine = pyttsx3.init()
-client = wolframalpha.Client('<APP ID HERE>')
-stt = speech_recognition.Recognizer()
+	#set properties of pyttsx3 engine
+	engine.setProperty("voice", "english+f2")
+	engine.setProperty("rate", 145)
 
-#set properties of pyttsx3 engine
-engine.setProperty("voice", "english+f2")
-engine.setProperty("rate", 145)
+	#Automatic sensitivity adjust for speech recognition
+	stt.dynamic_energy_threshold = True
 
-#Automatic sensitivity adjust for speech recognition
-stt.dynamic_energy_threshold = True
+except:
+	print("Failed to Initialize instances\n"
+		"(wolframalpha/SpeechRecognition/pyttsx3)")
+	sys.exit()
 
 #Speech Recognition Errors
 rec_err = (
@@ -35,7 +41,7 @@ rec_err = (
 
 def remove_words_from_string(string,*args, sep = " "):
 	'''
-	Removes certain word from string and joins them using the sep (seperator) provided.
+	Removes certain word from string and join the rest using the sep (seperator) provided.
 	'''
 	string = string.split()
 	for word in args:
@@ -49,11 +55,17 @@ def play_audio(audio_name):
 	''' 
 	play audio files in the response directory with mpg123 player
 	'''
-	audio_name = "./responses/"+audio_name+".mp3"
-	subprocess.run(["mpg123", "-q",audio_name])
+	try:
+		audio_name = "./responses/"+audio_name+".mp3"
+		subprocess.run(["mpg123", "-q",audio_name])
+	except:
+		msg = "Check your installation of mpg123 player"
+		print(msg + "\nCheck if mpg123 is in system PATH")
+		speak(msg)
+		sys.exit()
 
 def add_voice(func):
-	''' Adds on_it.mp3 to a function'''
+	''' Plays on_it.mp3 before executing a function'''
 	@wraps(func)
 	def inner(*args, **kwargs):
 		play_audio("on_it")
@@ -65,7 +77,8 @@ def add_voice(func):
 
 def recognize_voice():
 	'''
-	Converts speech to text if detection is success otherwise displays the suitable error
+	Converts speech to text if detection is successfull
+	otherwise displays the suitable error.
 	'''
 	try:
 		with speech_recognition.Microphone() as source:
@@ -80,23 +93,23 @@ def recognize_voice():
 		command = stt.recognize_google(audio).lower()
 		print(command)
 		return command
-		# q.put(command)
+
+	#Could not make sense of audio
 	except speech_recognition.UnknownValueError:
 	    audio = choice(('sorry', 'wrong_ones_zeros'))
 	    threading.Thread(target = play_audio, args=(audio,)).start()
 	    return "Sorry. I didn't quite catch that."
-	    # q.put("Sorry. I didn't quite catch that.")
-
 	
+	#Could not fetch results
 	except speech_recognition.RequestError:
 	    threading.Thread(target = play_audio, args=("conn_err")).start()
 	    return "Could not request results. Check the Internet connection"
-	    # q.put("Could not request results. Check the Internet connection")
 	
+	#No voice was detected and recognition timed out
 	except speech_recognition.WaitTimeoutError:
 		threading.Thread(target = play_audio, args=("no_voice",)).start()
 		return "No voice detected"
-		# q.put("No voice detected")
+
 
 def tts_save(content, path):
 	'''
@@ -117,13 +130,15 @@ def speak(content):
 	#File created(if any) by gTTS is deleted in the except block
 	try:
 		
-		file_name = "temp"
+		file_name = "temp_response"
 		path = "responses/"+file_name+".mp3"
 
 		process = multiprocessing.Process(target = tts_save, args = (content,path))
 		process.run()
+		#wait 5 sec before continuing execution.
 		process.join(5)
 
+		#Terminate process if its running after 5 sec.
 		if process.is_alive():
 			process.terminate()
 			process.join()
@@ -140,7 +155,7 @@ def speak(content):
 
 def search_google(query):
 	'''
-	Opens the google search result of a query in default browser
+	Opens the results of google search of the query, in default browser
 	'''
 	play_audio("google")
 	query = remove_words_from_string(query, 'google', sep = "+")
@@ -153,21 +168,21 @@ def wolfram_search(query_term):
 	Queries the WolframAlpha Simple API for the provided query_term
 	'''
 	response = client.query(query_term)
-	if response["@success"] == 'true': #check if query was a success
+	#check if query was a success
+	if response["@success"] == 'true':
 		response = next(response.results).text #text returned as a result of query
 		print(response)
 		return speak(response)
 	else:
 		#if query wasn't a success then google search for the same query
 		play_audio("no_result")
-		sleep(0.5)
 		return search_google(query_term)
 
 @add_voice
 def wikipedia_search(search_term, screen_manager):	
 	'''
 	Search for wikipedia page of given search_term and display the summary.
-	If the user wants the wikipedia page is also opened in the default browser.
+	If the user wants the wikipedia page, open it in the default browser.
 	'''
 
 	search_term = remove_words_from_string(search_term, 'wiki', 'wikipedia')
@@ -186,6 +201,7 @@ def wikipedia_search(search_term, screen_manager):
 		screen_manager.current = "wiki"
 	
 		play_audio("wikipedia")
+
 		choice = recognize_voice()
 		if choice and choice not in rec_err:
 			if re.search("(yes|yeah|yea|sure|glad)", choice):
@@ -282,10 +298,10 @@ def execute_command(query, screen_manager):
 	
 	elif query:
 	#query wolfram if all the others were false
-		try:
-			wolfram_search(query)
-		except:
-			search_google(query)
+		# try:
+		# 	wolfram_search(query)
+		# except:
+		search_google(query)
 
 if __name__ == '__main__':
 	main()
