@@ -20,6 +20,7 @@ regarding the query in the default browser.
 ### Assistant is able to do the following tasks
 #### Open music player 
 ***(Lollypop music player must be installed)***
+
 Try saying `play music` or `play songs`.
 
 #### Search wikipedia
