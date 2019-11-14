@@ -181,7 +181,8 @@ def wolfram_search(query_term):
 @add_voice
 def wikipedia_search(search_term, screen_manager):	
 	'''
-	Search for wikipedia page of given search_term and display the summary.
+	Search for wikipedia page of given search_term and save the summary
+	in files/display.txt.
 	If the user wants the wikipedia page, open it in the default browser.
 	'''
 
@@ -213,6 +214,7 @@ def wikipedia_search(search_term, screen_manager):
 def youtube_video(query):
 	'''
 	Search for videos on youtube as per the given query
+	and open the URL of results.
 	'''
 	query = remove_words_from_string(query, 'youtube', 'play',
 	'search', 'on', sep= '+')
@@ -242,7 +244,8 @@ def save_notes():
 
 def delete_saved_note(screen_manager):
 	'''
-	Deletes a saved note from the text file my_notes.txt
+	Change the screen to delete_notes if the size of my_notes.txt
+	is greater than zero i.e. the file is not empty.
 	'''		
 	if os.path.getsize("files/my_notes.txt"):
 		play_audio('delete_note')
@@ -252,7 +255,8 @@ def delete_saved_note(screen_manager):
 
 def show_notes(screen_manager):
 	'''
-	Displays the notes.
+	Change the screen to show_notes if the size of my_notes.txt
+	is greater than zero i.e. the file is not empty.
 	'''
 	if os.path.getsize("files/my_notes.txt"):
 		play_audio("on_it")

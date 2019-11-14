@@ -6,9 +6,9 @@ from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
 import os
 import threading
-import functions
 from random import choice
 from kivy.clock import Clock
+import functions
 
 #Speech Recognition Errors
 rec_err = (
@@ -30,6 +30,7 @@ color_dict = {
 	"11999e" : (0.670, 0.600, 0.620),#Dark cyan
 }
 
+#To manage and switch between screens
 screen_manager = ScreenManager()
 
 class OutputLabel(ScrollView):
@@ -43,7 +44,9 @@ class OutputLabel(ScrollView):
 
 	def update_history(self, message):
 		'''
-		Update Output label to display latest messages
+		Update Output label(chat_history) to display latest messages
+		then scroll to the empty label at the end, which looks like auto
+		scrolling to last line of chat_history
 		'''
 		self.chat_history.text += "\n" + message
 		color = choice(list(color_dict.keys()))
@@ -56,6 +59,10 @@ class MainWindow(GridLayout):
 	via thread.
 	'''
 	# threading.Thread(target = functions.play_audio, args = ("hello",)).start()
+
+	#history is a variable refering to OutputLabel class
+	#and thus is used to call update_history method of
+	#that class.
 	history = ObjectProperty()
 
 	def rec_and_exec(self, *args):
@@ -77,6 +84,8 @@ class MainWindow(GridLayout):
 		'''
 		self.history.update_history("Listening")
 
+		#A thread is only created if active thread count is less than 2
+		#to prevent multiple threads trying to detect voice.
 		if threading.active_count() < 2:
 			threading.Thread(target = self.rec_and_exec).start()
 		
@@ -86,15 +95,23 @@ class DeleteNotes(Screen):
 	Class containing screen layout and functions related to deleting an
 	existing note.
 	'''
+
+	#layout variable refers to Gridlayout inside the scrollview
 	layout = ObjectProperty()
 	notes = None
 	
 	def on_enter(self):
+		'''
+		When the screen is switched to this class
+		then schedule show_note method to execute
+		(once)
+		'''
 		Clock.schedule_once(self.show_note)
 
 	def show_note(self, *args):
 		'''
-		Saved notes are displayed as buttons
+		Saved notes are read from my_notes.txt and
+		displayed as buttons
 		'''
 		self.layout.clear_widgets()
 		with open("files/my_notes.txt", 'r') as file:
@@ -107,7 +124,9 @@ class DeleteNotes(Screen):
 
 	def delete(self, instance):
 		'''
-		Delete a Single stored note
+		Delete a Single stored note.
+		When a button corresponding to a specific note
+		is pressed, that note is removed from my_notes.txt.
 		'''
 		self.notes.remove(instance.text)
 		self.layout.remove_widget(instance)
@@ -126,7 +145,9 @@ class WikipediaDisplay(Screen):
 
 	def on_enter(self):
 		'''
-		When on_enter event is flagged display the summary via txt file
+		When on_enter event is flagged i.e. when the
+		screen is switched to this class, display the summary
+		via display.txt file and then remove the file.
 		'''
 		path = "files/display.txt"
 		if os.path.exists(path):
@@ -167,18 +188,18 @@ class AssistantApp(App):
 		Return the ScreenManager Instance.
 		'''
 
+		#Make MainWindow object, create a screen,
+		#Add the object to created screen
+		#Lastly add the screen to screen manager
 		self.MainWindow = MainWindow()
 		screen = Screen(name = "main")
 		screen.add_widget(self.MainWindow)
 		screen_manager.add_widget(screen)
 
-		# self.DeleteNotes = DeleteNotes()
-		# screen = Screen(name = "delete_notes")
-		# screen.add_widget(self.DeleteNotes)
+		#Add Screen classes with following names to the screen
+		#manager
 		screen_manager.add_widget(DeleteNotes(name = "delete_notes"))
-
 		screen_manager.add_widget(WikipediaDisplay(name = "wiki"))
-
 		screen_manager.add_widget(NotesDisplay(name = "show_notes"))
 		
 		return screen_manager
