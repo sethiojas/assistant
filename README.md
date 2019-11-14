@@ -4,7 +4,7 @@ A personal assistant which can take care of mostly all the basic task
 such as taking notes, search google, wikipedia or youtube, open the music player (lollypop)
 and shutting down the computer.
 
-*** espeak is required for offline tts.***
+***espeak is required for offline tts.***
 
 ## Table of Contents
 * [Commands and Functionality](#commands-and-functionality)
