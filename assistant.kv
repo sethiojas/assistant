@@ -1,6 +1,9 @@
 #: import Window kivy.core.window.Window
 #: import Image kivy.uix.image
 
+#OutputLabel makes the scrollview on the main window.
+#It outputs the command given to the assistant.
+
 <OutputLabel>:
 	
 	chat_history: _chat_history
@@ -13,6 +16,9 @@
 		size_hint_y: None
 		height: _chat_history.texture_size[1]+15
 
+		#Every command given to the assistant is append
+		#to this label and shown on the screen.
+
 		Label:
 			id: _chat_history
 			height: self.texture_size[1]
@@ -22,15 +28,31 @@
 			
 			canvas.before:
 				Color:
+				#make the color equal to the value of bg_color variable
+				#stored in this class.
 					rgb: self.bg_color
 
 				Rectangle:
 					size: self.size
 					pos: self.pos
 		
+		#This label is put at the end so we can scroll to it.
+		#Every command given to the assistant is appended to the upper label
+		#so to autoscroll as the screen gets full of commands
+		#we create a label with no height to sit at the very bottom
+		#so that we can scroll to it, as we can only scroll to a widget
+		#not a specific text line shown on the screen.
+
 		Label:
 			id: _scroll_to_point
 			size_hint_y: None
+
+#This is the main window of the app which opens when
+#we open the app. It contains OutputLabel to display
+#the commands given to assistant.
+#This screen also contains the mic button, which upon
+#being pressed leads the assistant to start voice
+#detection and recognitiion
 
 <MainWindow>:
 
@@ -63,6 +85,12 @@
 				allow_stretch: True
 				pos: self.parent.pos
 
+
+#Delete Notes screen contains every note saved via
+#the assistant as a button which can be pressed.
+#Upon pressing the button corresponding to the respective
+#note, that note gets deleted
+
 <DeleteNotes>:
 
 	layout: _layout
@@ -77,7 +105,22 @@
 			height: self.minimum_height
 			padding: 30,30
 
-<ScrollviewWithButton@GridLayout>:
+#It is a dynamic class.
+#This class contains a Scroll view inside which
+#a label is present. Below the scroll view there
+#is a button.
+#This class is used to make WikipediaDisplay and
+#NotesDisplay screens.
+#Since only one label is present hence the view is
+#not auto-scrolled to the last line.
+#But it can be scrolled manually if the data to be
+#displayed doesn't fit the screen.
+#Pressing the button located below the
+#scroll view changes the screen from the
+#one present to Main Window of the app
+#and hence works as a back button.
+
+<ScrollviewWithLabelButton@GridLayout>:
 	cols:1
 	rows:2
 
@@ -123,11 +166,15 @@
 				pos: self.parent.pos
 				allow_stretch: True
 
+
+#This screens shows the summary (if fetched)
+#from wikipedia.
+
 <WikipediaDisplay>:
 
 	display: view.ids._display
 
-	ScrollviewWithButton:
+	ScrollviewWithLabelButton:
 		id: view
 
 		canvas.before:
@@ -137,11 +184,15 @@
 				size: self.size
 				pos: self.pos
 
+
+#This screen displays the notes saved via
+#assistant(if any).
+
 <NotesDisplay>:
 
 	display: view.ids._display
 		
-	ScrollviewWithButton:
+	ScrollviewWithLabelButton:
 		id: view
 
 		canvas.before:
