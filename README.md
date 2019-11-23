@@ -47,16 +47,22 @@ Saying `poweroff` or `shut down` will shut down the machine.
 
 ## ScreenShots
 
+### Main Window (1/2)
 ![Main Window](https://github.com/sethiojas/readme_images/blob/master/Assistant/main_window.png)
 
+### Summary from Wikipedia
 ![Wikipedia Summary Screen](https://github.com/sethiojas/readme_images/blob/master/Assistant/wiki.png)
 
+### Saved Notes Screen
 ![Show Notes Screen](https://github.com/sethiojas/readme_images/blob/master/Assistant/show_notes.png)
 
-![Delete Notes Screen](https://github.com/sethiojas/readme_images/blob/master/Assistant/delete_note.png)
-
+### Main Window (2/2)
 ![Main Window](https://github.com/sethiojas/readme_images/blob/master/Assistant/main_window_2.png)
 
+### Delete Notes Screen
+![Delete Notes Screen](https://github.com/sethiojas/readme_images/blob/master/Assistant/delete_note.png)
+
+### Youtube Query Result
 ![Youtube Search](https://github.com/sethiojas/readme_images/blob/master/Assistant/youtube.png)
 
 ## Requirments
