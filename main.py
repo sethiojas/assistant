@@ -58,7 +58,6 @@ class MainWindow(GridLayout):
 	Contains Scrollable Display label and a button to start stt recognition
 	via thread.
 	'''
-	# threading.Thread(target = functions.play_audio, args = ("hello",)).start()
 
 	#history is a variable refering to OutputLabel class
 	#and thus is used to call update_history method of
@@ -104,7 +103,7 @@ class DeleteNotes(Screen):
 		'''
 		When the screen is switched to this class
 		then schedule show_note method to execute
-		(once)
+		once
 		'''
 		Clock.schedule_once(self.show_note)
 
@@ -188,16 +187,13 @@ class AssistantApp(App):
 		Return the ScreenManager Instance.
 		'''
 
-		#Make MainWindow object, create a screen,
-		#Add the object to created screen
-		#Lastly add the screen to screen manager
+		
 		self.MainWindow = MainWindow()
 		screen = Screen(name = "main")
 		screen.add_widget(self.MainWindow)
 		screen_manager.add_widget(screen)
 
-		#Add Screen classes with following names to the screen
-		#manager
+		#Add Screen classes to screen manager
 		screen_manager.add_widget(DeleteNotes(name = "delete_notes"))
 		screen_manager.add_widget(WikipediaDisplay(name = "wiki"))
 		screen_manager.add_widget(NotesDisplay(name = "show_notes"))

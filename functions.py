@@ -127,7 +127,7 @@ def speak(content):
 
 	#Use Google Text-To-Speech to answer. If it takes more than 5 second to fetch the audio
 	#Then response is played via pyttsx3 engine.
-	#File created(if any) by gTTS is deleted in the except block
+	#File created(if any) by gTTS is deleted
 	try:
 		
 		file_name = "temp_response"
